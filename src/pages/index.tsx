@@ -19,20 +19,60 @@ const Home = () => {
     console.log(x, y);
     const newBoard = structuredClone(board);
 
-    // 下が自分と違う色だったら
-    if (board[y + 1] !== undefined && board[y + 1][x] === 3 - turnColor) {
-      for (let i = 2; board[y + i] !== undefined; i++) {
-        console.log('k');
-        if (board[y + i][x] === turnColor) {
-          console.log('o');
-          for (let j = 0; board[y + j][x] !== turnColor; j++) {
-            newBoard[y + j][x] = turnColor;
+    const direction = [
+      [-1, 0],
+      [-1, 1],
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, -1],
+    ];
+
+    direction.map((r) => {
+      const y_around: number = r[0];
+      const x_around: number = r[1];
+      let p = y_around * 2;
+      let q = x_around * 2;
+
+      // となりが自分と違う色だったら
+      if (
+        board[y][x] === 0 &&
+        board[y + y_around] !== undefined &&
+        board[y + y_around][x + x_around] === 3 - turnColor
+      ) {
+        for (let i: number = 3; board[y + p] !== undefined; i++) {
+          console.log('detect');
+
+          console.log(p);
+          console.log(q);
+          if (board[y + p][x + q] === undefined || board[y + p][x + q] === 0) {
+            console.log('False');
+            break;
           }
+          if (board[y + p][x + q] === turnColor) {
+            console.log('True');
+            p /= i;
+            q /= i;
+            console.log(i);
+            newBoard[y][x] = turnColor;
+            for (let j = 1; j < i; j++) {
+              console.log('Turn');
+              p = y_around * j;
+              q = x_around * j;
+
+              newBoard[y + p][x + q] = turnColor;
+            }
+            console.log('change');
+            setTurnColor(3 - turnColor);
+            break;
+          }
+          p = y_around * i;
+          q = x_around * i;
         }
       }
-      setTurnColor(3 - turnColor);
-    }
-
+    });
     // 石の色を透明＞ターンの色に変更
     // ターンの色を変える（setTurnColor(turnColor===1?2:1)）
 
