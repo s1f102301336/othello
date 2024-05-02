@@ -19,7 +19,7 @@ const Home = () => {
     console.log(x, y);
     const newBoard = structuredClone(board);
 
-    const direction = [
+    const directions = [
       [-1, 0],
       [-1, 1],
       [0, 1],
@@ -30,7 +30,7 @@ const Home = () => {
       [-1, -1],
     ];
 
-    direction.map((r) => {
+    directions.map((r) => {
       const y_around: number = r[0];
       const x_around: number = r[1];
       let p = y_around * 2;
@@ -84,7 +84,13 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.text}>a</div>
+      <div className={styles.text}>
+        <div>{{ 1: '黒', 2: '白' }[turnColor]}の番です</div>
+        <div>
+          黒：{board.flat().filter((point) => point === 1).length}
+          白：{board.flat().filter((point) => point === 2).length}
+        </div>
+      </div>
       <div className={styles.boardStyle}>
         {board.map((row, y) =>
           row.map((color, x) => (
