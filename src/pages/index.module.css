@@ -1,4 +1,11 @@
-/* 全体 */
+.whole {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+/* オセロの全体 */
 .container {
   display: flex;
   flex-direction: column;

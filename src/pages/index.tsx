@@ -37,7 +37,7 @@ const Home = () => {
       let q = x_around * 2;
       // if文で端のマスに置けなくならないように、*2
 
-      // 周りが自分と違う色だったら
+      // 周りが自分と違う色の時
       if (
         board[y][x] === 0 &&
         board[y + y_around] !== undefined &&
@@ -83,27 +83,33 @@ const Home = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.whole}>
+      <div className={styles.container}>
+        <div className={styles.boardStyle}>
+          {board.map((row, y) =>
+            row.map((color, x) => (
+              <div
+                className={styles.cellStyle}
+                key={`${x}-${y}`}
+                onClick={() => clickHandler(x, y)}
+              >
+                {color !== 0 && (
+                  <div
+                    className={styles.stoneStyle}
+                    style={{ background: color === 1 ? '#000' : '#fff' }}
+                  />
+                )}
+              </div>
+            )),
+          )}
+        </div>
+      </div>
       <div className={styles.text}>
         <div>{{ 1: '黒', 2: '白' }[turnColor]}の番です</div>
         <div>
           黒：{board.flat().filter((point) => point === 1).length}
           白：{board.flat().filter((point) => point === 2).length}
         </div>
-      </div>
-      <div className={styles.boardStyle}>
-        {board.map((row, y) =>
-          row.map((color, x) => (
-            <div className={styles.cellStyle} key={`${x}-${y}`} onClick={() => clickHandler(x, y)}>
-              {color !== 0 && (
-                <div
-                  className={styles.stoneStyle}
-                  style={{ background: color === 1 ? '#000' : '#fff' }}
-                />
-              )}
-            </div>
-          )),
-        )}
       </div>
     </div>
   );
