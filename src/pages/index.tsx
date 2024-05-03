@@ -15,20 +15,66 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
+  const boardWithAssists = structuredClone(board);
+
+  const directions = [
+    [-1, 0],
+    [-1, 1],
+    [0, 1],
+    [1, 1],
+    [1, 0],
+    [1, -1],
+    [0, -1],
+    [-1, -1],
+  ];
+
+  boardWithAssists.map((row, y) =>
+    row.map((_, x) =>
+      directions.map((r) => {
+        const y_around: number = r[0];
+        const x_around: number = r[1];
+        let p = y_around * 2;
+        let q = x_around * 2;
+
+        if (
+          boardWithAssists[y][x] === 0 &&
+          boardWithAssists[y + y_around] !== undefined &&
+          boardWithAssists[y + y_around][x + x_around] === 3 - turnColor
+        ) {
+          console.log(y, x);
+          // 端まで繰り返す
+          for (let i: number = 3; boardWithAssists[y + p] !== undefined; i++) {
+            console.log('detect');
+            console.log(p);
+            console.log(q);
+            // 端まで来たor石がない時
+            if (
+              boardWithAssists[y + p][x + q] === undefined ||
+              boardWithAssists[y + p][x + q] === 0
+            ) {
+              console.log('False');
+              break;
+            }
+            // 自分の石があったとき
+            if (boardWithAssists[y + p][x + q] === turnColor) {
+              console.log('True');
+              boardWithAssists[y][x] = 3;
+              console.log(boardWithAssists[y][x]);
+              break;
+            }
+            // 繰り返しの更新
+            p = y_around * i;
+            q = x_around * i;
+          }
+        }
+      }),
+    ),
+  );
+  console.log(boardWithAssists);
+
   const clickHandler = (x: number, y: number) => {
     console.log(x, y);
     const newBoard = structuredClone(board);
-
-    const directions = [
-      [-1, 0],
-      [-1, 1],
-      [0, 1],
-      [1, 1],
-      [1, 0],
-      [1, -1],
-      [0, -1],
-      [-1, -1],
-    ];
 
     directions.map((r) => {
       const y_around: number = r[0];
@@ -86,7 +132,7 @@ const Home = () => {
     <div className={styles.whole}>
       <div className={styles.container}>
         <div className={styles.boardStyle}>
-          {board.map((row, y) =>
+          {boardWithAssists.map((row, y) =>
             row.map((color, x) => (
               <div
                 className={styles.cellStyle}
@@ -96,7 +142,7 @@ const Home = () => {
                 {color !== 0 && (
                   <div
                     className={styles.stoneStyle}
-                    style={{ background: color === 1 ? '#000' : '#fff' }}
+                    style={{ background: color === 1 ? '#000' : color === 2 ? '#fff' : '#fdfd6c' }}
                   />
                 )}
               </div>
