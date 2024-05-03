@@ -28,6 +28,8 @@ const Home = () => {
     [-1, -1],
   ];
 
+  let Assists = 0;
+
   boardWithAssists.map((row, y) =>
     row.map((_, x) =>
       directions.map((r) => {
@@ -59,6 +61,7 @@ const Home = () => {
             if (boardWithAssists[y + p][x + q] === turnColor) {
               console.log('True');
               boardWithAssists[y][x] = 3;
+              Assists += 1;
               console.log(boardWithAssists[y][x]);
               break;
             }
@@ -70,6 +73,7 @@ const Home = () => {
       }),
     ),
   );
+  console.log(Assists);
   console.log(boardWithAssists);
 
   const clickHandler = (x: number, y: number) => {
@@ -128,8 +132,21 @@ const Home = () => {
     // クローンを反映（石を置く）（if文に引っかからないなら変化なし）
   };
 
+  let PassCount: number;
+
+  const PassCounter = () => {
+    PassCount += 1;
+    console.log('PassCount', PassCount);
+  };
+  console.log('PassCount', PassCount);
+
+  const WinNum = [
+    board.flat().filter((point) => point === 1).length,
+    board.flat().filter((point) => point === 2).length,
+  ];
+
   return (
-    <div className={styles.whole}>
+    <div className={styles.entire}>
       <div className={styles.container}>
         <div className={styles.boardStyle}>
           {boardWithAssists.map((row, y) =>
@@ -150,16 +167,40 @@ const Home = () => {
           )}
         </div>
       </div>
-      <div className={styles.cercle}>
-        <div className={styles.text}>
-          <div>
-            {{ 1: '黒', 2: '白' }[turnColor]}
-            <span className={styles.minifont}>の番です</span>
+      <div className={styles.textEntire}>
+        <div className={styles.cercle}>
+          <div className={styles.text}>
+            {board.flat().filter((point) => point === 0).length === 0 ||
+              (PassCount >= 2 && (
+                <div className={styles.Winer}>
+                  {{ 1: '黒', 2: '白' }[Math.max(...WinNum)]}の勝ち！
+                </div>
+              ))}
+            {board.flat().filter((point) => point === 0).length !== 0 && (
+              <div>
+                {{ 1: '黒', 2: '白' }[turnColor]}
+                <span className={styles.minifont}>の番です</span>
+              </div>
+            )}
+            {board.flat().filter((point) => point === 0).length === 0 && <div>ゲームセット</div>}
+            <div>
+              黒：{board.flat().filter((point) => point === 1).length}&emsp; 白：
+              {board.flat().filter((point) => point === 2).length}
+            </div>
           </div>
-          <div>
-            黒：{board.flat().filter((point) => point === 1).length}&emsp; 白：
-            {board.flat().filter((point) => point === 2).length}
-          </div>
+        </div>
+        <div className={styles.PassCheck}>
+          {Assists === 0 && (
+            <div
+              className={styles.passButton}
+              onClick={() => {
+                setTurnColor(3 - turnColor);
+                PassCounter();
+              }}
+            >
+              パス
+            </div>
+          )}
         </div>
       </div>
     </div>
