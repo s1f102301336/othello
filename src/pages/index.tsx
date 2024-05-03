@@ -104,11 +104,16 @@ const Home = () => {
           )}
         </div>
       </div>
-      <div className={styles.text}>
-        <div>{{ 1: '黒', 2: '白' }[turnColor]}の番です</div>
-        <div>
-          黒：{board.flat().filter((point) => point === 1).length}
-          白：{board.flat().filter((point) => point === 2).length}
+      <div className={styles.cercle}>
+        <div className={styles.text}>
+          <div>
+            {{ 1: '黒', 2: '白' }[turnColor]}
+            <span className={styles.minifont}>の番です</span>
+          </div>
+          <div>
+            黒：{board.flat().filter((point) => point === 1).length}&emsp; 白：
+            {board.flat().filter((point) => point === 2).length}
+          </div>
         </div>
       </div>
     </div>
