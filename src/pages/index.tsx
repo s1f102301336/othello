@@ -172,7 +172,7 @@ const Home = () => {
               (ColorNum[0].stoneCount === ColorNum[1].stoneCount ? (
                 <div>ひきわけ！</div>
               ) : (
-                <div className={styles.Winer}>
+                <div>
                   {{ 1: '黒', 2: '白' }[WinJudge]}
                   の勝ち！
                 </div>
@@ -191,8 +191,8 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className={styles.PassCheck}>
-          {Assists && (
+        <div>
+          {Assists === 0 && (
             <div
               className={styles.passButton}
               onClick={() => {
