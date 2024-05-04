@@ -17,6 +17,8 @@ const Home = () => {
 
   const boardWithAssists = structuredClone(board);
 
+  const [PassCount, setPassCount] = useState(0);
+
   const directions = [
     [-1, 0],
     [-1, 1],
@@ -126,24 +128,20 @@ const Home = () => {
       }
     });
     // 石の色を透明＞ターンの色に変更
-    // ターンの色を変える（setTurnColor(turnColor===1?2:1)）
+    // ターンの色を変える（setTurnColor(turnColor===1?2:1)
 
     setBoard(newBoard);
     // クローンを反映（石を置く）（if文に引っかからないなら変化なし）
   };
 
-  let PassCount: number;
-
-  const PassCounter = () => {
-    PassCount += 1;
-    console.log('PassCount', PassCount);
-  };
-  console.log('PassCount', PassCount);
-
-  const WinNum = [
-    board.flat().filter((point) => point === 1).length,
-    board.flat().filter((point) => point === 2).length,
+  const ColorNum = [
+    { color: 1, stoneCount: board.flat().filter((point) => point === 1).length },
+    { color: 2, stoneCount: board.flat().filter((point) => point === 2).length },
   ];
+
+  const WinJudge = ColorNum.reduce((a, b) => (a.stoneCount > b.stoneCount ? a : b)).color;
+
+  console.log('Winner', WinJudge, ColorNum[0].stoneCount, ColorNum[1].stoneCount);
 
   return (
     <div className={styles.entire}>
@@ -170,13 +168,17 @@ const Home = () => {
       <div className={styles.textEntire}>
         <div className={styles.cercle}>
           <div className={styles.text}>
-            {board.flat().filter((point) => point === 0).length === 0 ||
-              (PassCount >= 2 && (
+            {(board.flat().filter((point) => point === 0).length === 0 || PassCount >= 2) &&
+              (ColorNum[0].stoneCount === ColorNum[1].stoneCount ? (
+                <div>ひきわけ！</div>
+              ) : (
                 <div className={styles.Winer}>
-                  {{ 1: '黒', 2: '白' }[Math.max(...WinNum)]}の勝ち！
+                  {{ 1: '黒', 2: '白' }[WinJudge]}
+                  の勝ち！
                 </div>
               ))}
-            {board.flat().filter((point) => point === 0).length !== 0 && (
+
+            {board.flat().filter((point) => point === 0).length !== 0 && PassCount < 2 && (
               <div>
                 {{ 1: '黒', 2: '白' }[turnColor]}
                 <span className={styles.minifont}>の番です</span>
@@ -184,18 +186,19 @@ const Home = () => {
             )}
             {board.flat().filter((point) => point === 0).length === 0 && <div>ゲームセット</div>}
             <div>
-              黒：{board.flat().filter((point) => point === 1).length}&emsp; 白：
-              {board.flat().filter((point) => point === 2).length}
+              黒：{ColorNum[0].stoneCount}&emsp; 白：
+              {ColorNum[1].stoneCount}
             </div>
           </div>
         </div>
         <div className={styles.PassCheck}>
-          {Assists === 0 && (
+          {Assists && (
             <div
               className={styles.passButton}
               onClick={() => {
+                setPassCount((PassCount) => PassCount + 1);
+                console.log('PassCount', PassCount);
                 setTurnColor(3 - turnColor);
-                PassCounter();
               }}
             >
               パス
