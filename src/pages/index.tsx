@@ -184,7 +184,6 @@ const Home = () => {
                 <span className={styles.minifont}>の番です</span>
               </div>
             )}
-            {board.flat().filter((point) => point === 0).length === 0 && <div>ゲームセット</div>}
             <div>
               黒：{ColorNum[0].stoneCount}&emsp; 白：
               {ColorNum[1].stoneCount}
