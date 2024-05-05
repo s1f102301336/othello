@@ -79,59 +79,61 @@ const Home = () => {
   console.log(boardWithAssists);
 
   const clickHandler = (x: number, y: number) => {
-    console.log(x, y);
-    const newBoard = structuredClone(board);
+    if (!GameSet) {
+      console.log(x, y);
+      const newBoard = structuredClone(board);
 
-    directions.map((r) => {
-      const y_around: number = r[0];
-      const x_around: number = r[1];
-      let p = y_around * 2;
-      let q = x_around * 2;
-      // if文で端のマスに置けなくならないように、*2
+      directions.map((r) => {
+        const y_around: number = r[0];
+        const x_around: number = r[1];
+        let p = y_around * 2;
+        let q = x_around * 2;
+        // if文で端のマスに置けなくならないように、*2
 
-      // 周りが自分と違う色の時
-      if (
-        board[y][x] === 0 &&
-        board[y + y_around] !== undefined &&
-        board[y + y_around][x + x_around] === 3 - turnColor
-      ) {
-        // 端まで繰り返す
-        for (let i: number = 3; board[y + p] !== undefined; i++) {
-          console.log('detect');
-          console.log(p);
-          console.log(q);
-          // 端まで来たor石がない時
-          if (board[y + p][x + q] === undefined || board[y + p][x + q] === 0) {
-            console.log('False');
-            break;
-          }
-          // 自分の石があったとき
-          if (board[y + p][x + q] === turnColor) {
-            console.log('True');
-            console.log(i);
-            // 置いたマスから見つけた石まで、ひっくり返す
-            for (let j = 0; j < i; j++) {
-              console.log('Turn');
-              p = y_around * j;
-              q = x_around * j;
-              newBoard[y + p][x + q] = turnColor;
+        // 周りが自分と違う色の時
+        if (
+          board[y][x] === 0 &&
+          board[y + y_around] !== undefined &&
+          board[y + y_around][x + x_around] === 3 - turnColor
+        ) {
+          // 端まで繰り返す
+          for (let i: number = 3; board[y + p] !== undefined; i++) {
+            console.log('detect');
+            console.log(p);
+            console.log(q);
+            // 端まで来たor石がない時
+            if (board[y + p][x + q] === undefined || board[y + p][x + q] === 0) {
+              console.log('False');
+              break;
             }
-            // ターン変更
-            console.log('change');
-            setTurnColor(3 - turnColor);
-            break;
+            // 自分の石があったとき
+            if (board[y + p][x + q] === turnColor) {
+              console.log('True');
+              console.log(i);
+              // 置いたマスから見つけた石まで、ひっくり返す
+              for (let j = 0; j < i; j++) {
+                console.log('Turn');
+                p = y_around * j;
+                q = x_around * j;
+                newBoard[y + p][x + q] = turnColor;
+              }
+              // ターン変更
+              console.log('change');
+              setTurnColor(3 - turnColor);
+              break;
+            }
+            // 繰り返しの更新
+            p = y_around * i;
+            q = x_around * i;
           }
-          // 繰り返しの更新
-          p = y_around * i;
-          q = x_around * i;
         }
-      }
-    });
-    // 石の色を透明＞ターンの色に変更
-    // ターンの色を変える（setTurnColor(turnColor===1?2:1)
+      });
+      // 石の色を透明＞ターンの色に変更
+      // ターンの色を変える（setTurnColor(turnColor===1?2:1)
 
-    setBoard(newBoard);
-    // クローンを反映（石を置く）（if文に引っかからないなら変化なし）
+      setBoard(newBoard);
+      // クローンを反映（石を置く）（if文に引っかからないなら変化なし）
+    }
   };
 
   const ColorNum = [
@@ -142,6 +144,8 @@ const Home = () => {
   const WinJudge = ColorNum.reduce((a, b) => (a.stoneCount > b.stoneCount ? a : b)).color;
 
   console.log('Winner', WinJudge, ColorNum[0].stoneCount, ColorNum[1].stoneCount);
+
+  const GameSet = board.flat().filter((point) => point === 0).length === 0 || PassCount >= 2;
 
   return (
     <div className={styles.entire}>
@@ -168,7 +172,7 @@ const Home = () => {
       <div className={styles.textEntire}>
         <div className={styles.cercle}>
           <div className={styles.text}>
-            {(board.flat().filter((point) => point === 0).length === 0 || PassCount >= 2) &&
+            {GameSet &&
               (ColorNum[0].stoneCount === ColorNum[1].stoneCount ? (
                 <div>ひきわけ！</div>
               ) : (
@@ -178,7 +182,7 @@ const Home = () => {
                 </div>
               ))}
 
-            {board.flat().filter((point) => point === 0).length !== 0 && PassCount < 2 && (
+            {!GameSet && (
               <div>
                 {{ 1: '黒', 2: '白' }[turnColor]}
                 <span className={styles.minifont}>の番です</span>
@@ -191,7 +195,7 @@ const Home = () => {
           </div>
         </div>
         <div>
-          {Assists === 0 && (
+          {Assists === 0 && !GameSet && (
             <div
               className={styles.passButton}
               onClick={() => {
